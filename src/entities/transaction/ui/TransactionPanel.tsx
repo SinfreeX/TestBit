@@ -14,7 +14,7 @@ export type TransactionPanelProps = {
 
 export const TransactionPanel = (props: TransactionPanelProps) => {
   const {email, onClose} = props
-  const [tableData, setTableData] = useState(transactionsTableDataGenerator())
+  const [tableData] = useState(transactionsTableDataGenerator())
 
   return (
     <Box
