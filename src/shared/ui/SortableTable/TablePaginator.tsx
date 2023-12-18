@@ -1,17 +1,16 @@
 import React from "react";
 import {Box, Stack} from "@mui/material";
+import {ReactComponent as ArrowIcon} from "./../../icons/arrow-narrow-left.svg"
 
 
 export type TablePaginatorProps = {
-  data: any[]
-  pageSize: number
+  totalPages: number
   pageNumber: number
   setPageNumber: React.Dispatch<React.SetStateAction<number>>
 }
 
 export const TablePaginator = (props: TablePaginatorProps) => {
-  const { data, pageSize, pageNumber, setPageNumber } = props;
-  const totalPages = Math.ceil(data.length / pageSize);
+  const { totalPages, pageNumber, setPageNumber } = props;
 
   const handlePageClick = (page: number) => {
     setPageNumber(page);
@@ -19,7 +18,6 @@ export const TablePaginator = (props: TablePaginatorProps) => {
 
   const PageButton = ({ page, isCurrent }: { page: number; isCurrent?: boolean }) => (
     <Box
-      key={page}
       onClick={() => handlePageClick(page)}
       padding="6px 14px"
       sx={(theme) => ({
@@ -27,10 +25,7 @@ export const TablePaginator = (props: TablePaginatorProps) => {
         borderRadius: '8px',
         cursor: 'pointer',
         '&:hover': {
-          backgroundColor: isCurrent ? theme.palette.primary : theme.palette.grayScale.gray3,
-        },
-        '&:active': {
-          backgroundColor: theme.palette.action.selected,
+          backgroundColor: isCurrent ? theme.palette.primary.light : theme.palette.grayScale.gray3,
         },
         color: isCurrent ? theme.palette.primary.contrastText : 'inherit',
       })}
@@ -42,21 +37,6 @@ export const TablePaginator = (props: TablePaginatorProps) => {
   return (
     <Stack spacing={2}>
       <Stack direction="row" justifyContent="center">
-        {pageNumber > 3 && (
-          <>
-            <PageButton page={1} />
-            <Box padding="6px 14px">...</Box>
-          </>
-        )}
-        {pageNumber > 1 && <PageButton page={pageNumber - 1} />}
-        <PageButton page={pageNumber} isCurrent />
-        {pageNumber < totalPages && <PageButton page={pageNumber + 1} />}
-        {pageNumber < totalPages - 2 && (
-          <>
-            <Box padding="6px 14px">...</Box>
-            <PageButton page={totalPages} />
-          </>
-        )}
         <Box
           onClick={() => pageNumber > 1 && handlePageClick(pageNumber - 1)}
           padding="6px 14px"
@@ -67,7 +47,23 @@ export const TablePaginator = (props: TablePaginatorProps) => {
             },
           })}
         >
+          <ArrowIcon />
         </Box>
+        {pageNumber > 2 && (
+          <>
+            <PageButton page={1} />
+            {pageNumber > 3 && <Box padding="6px 14px">...</Box>}
+          </>
+        )}
+        {pageNumber > 1 && <PageButton page={pageNumber - 1} />}
+        <PageButton page={pageNumber} isCurrent />
+        {pageNumber < totalPages && <PageButton page={pageNumber + 1} />}
+        {pageNumber < totalPages - 1 && (
+          <>
+            {pageNumber < totalPages - 2 && <Box padding="6px 14px">...</Box>}
+            <PageButton page={totalPages} />
+          </>
+        )}
         <Box
           onClick={() => pageNumber < totalPages && handlePageClick(pageNumber + 1)}
           padding="6px 14px"
@@ -79,8 +75,9 @@ export const TablePaginator = (props: TablePaginatorProps) => {
             transform: 'rotate(180deg)',
           })}
         >
+          <ArrowIcon />
         </Box>
       </Stack>
     </Stack>
   );
-}
+};

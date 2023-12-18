@@ -71,6 +71,7 @@ export const muiThemeRoot: Omit<ThemeOptions, 'palette'> = {
             fontWeight: 500
           },
           ' tr': {
+            position: 'sticky',
             ' th': {
               borderBottom: 'none'
             },

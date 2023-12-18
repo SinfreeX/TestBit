@@ -1,6 +1,7 @@
-import React, {useMemo} from "react";
+import React from "react";
 import {
-  Box, CircularProgress,
+  Box,
+  Skeleton,
   Stack,
   Table,
   TableBody,
@@ -13,6 +14,15 @@ import {
 
 import {ReactComponent as EditIcon} from '../../../shared/icons/edit.svg'
 import {ReactComponent as RemoveIcon} from '../../../shared/icons/remove.svg'
+
+export type RowData = Record<string | 'id', any>
+
+export type TableData = {
+  isError: boolean,
+  isLoading: boolean,
+  totalPages: number,
+  pagesData: Record<number, RowData[]> | null
+}
 
 export type renderCellFn<Keys extends string> = (props: {
   row: Record<Keys, any>
@@ -30,40 +40,22 @@ export type HeadCell<Keys extends string> = {
 
 export type SortableTableProps<T extends string> = {
   headCells: HeadCell<T | 'actions'>[]
-  tableData: Record<T | 'id', any>[]
+  tableData: RowData[]
   isLoading?: boolean
-  pageNumber?: number
-  pageSize?: number
   isRowsActions?: boolean
   onClickRow?: (row: Record<T, any>) => void
+  maxHeight: string
 }
 
 export const SortableTable = <T extends string>(props: SortableTableProps<T>) => {
   const {
     headCells,
     tableData,
+    maxHeight,
     isLoading = false,
-    pageNumber = 1,
-    pageSize = 10,
     isRowsActions = true,
     onClickRow
   } = props
-
-  const currentPageData = useMemo(() => {
-    if (!tableData.length) return []
-    const startIndex = (pageNumber - 1) * pageSize
-    return tableData.slice(startIndex, startIndex + pageSize)
-  }, [pageNumber, pageSize, tableData])
-
-  const renderCells = useMemo(() => {
-    return headCells.reduce((acc, cell) => {
-      if (!('renderCell' in cell)) return acc
-      return {
-        ...acc,
-        [cell.accessorKey]: cell.renderCell
-      }
-    }, {}) as Record<string, HeadCell<T>['renderCell']>
-  }, headCells)
 
   const defaultRenderCell = (key: string, value: string) => (
     <TableCell key={key} align="center">
@@ -72,7 +64,9 @@ export const SortableTable = <T extends string>(props: SortableTableProps<T>) =>
   )
 
   return (
-    <TableContainer>
+    <TableContainer
+      sx={{maxHeight}}
+    >
       <Table sx={{minWidth: 240}}>
         <TableHead>
           <TableRow>
@@ -87,15 +81,28 @@ export const SortableTable = <T extends string>(props: SortableTableProps<T>) =>
             ))}
           </TableRow>
         </TableHead>
-        {isLoading ? <CircularProgress/> :
+        {isLoading ?
+
           <TableBody>
-            {currentPageData.map(({id, ...cellsData}) => (
-              <TableRow key={id} onClick={() => onClickRow && onClickRow(cellsData as Record<T, any>)}>
-                {Object.entries(cellsData).map(([key, value]: [string, any]) =>
-                  (renderCells[key]
-                    ? (renderCells[key] as renderCellFn<T>)({cell: value, row: cellsData as Record<T, any> })
-                    : defaultRenderCell(key, value)
-                  ))}
+            {Array.from({ length: 15 }, (_, i) => i).map(id => (
+              <TableRow key={`loader-${id}-row`}>
+                {headCells.map(({accessorKey}) => (
+                  <TableCell key={`loader-${accessorKey}-cell`}>
+                    <Skeleton />
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+
+          : <TableBody>
+            {tableData.map((row) => (
+              <TableRow key={row.id} onClick={() => onClickRow && onClickRow(row as Record<T, any>)}>
+                {headCells.map(({accessorKey, renderCell}) =>
+                  (accessorKey !== 'actions' && (renderCell
+                    ? (renderCell as renderCellFn<T>)({cell: row[accessorKey], row: row as Record<T, any> })
+                    : defaultRenderCell(accessorKey, row[accessorKey])
+                  )))}
                 {isRowsActions && (
                   <TableCell>
                     <Stack direction="row" justifyContent="center" gap="10px">

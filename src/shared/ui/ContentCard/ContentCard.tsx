@@ -1,5 +1,5 @@
 import React from "react";
-import {Box, Divider, Typography} from "@mui/material";
+import {Box, Divider, Stack, Typography} from "@mui/material";
 
 export type ContentCardProps = {
   title: string
@@ -10,12 +10,14 @@ export const ContentCard = (props: ContentCardProps) => {
   const {title, children} = props
 
   return (
-    <Box
+    <Stack
       sx={(theme) => ({
         background: theme.palette.background.paper,
         minHeight: '300px',
         borderRadius: '18px',
         margin: '0 25px',
+        flexGrow: 1,
+        height: '100%',
         [theme.breakpoints.down('md')]: {
           margin: '0 40px',
         },
@@ -47,6 +49,8 @@ export const ContentCard = (props: ContentCardProps) => {
       <Box
         sx={(theme) => ({
           padding: '29px 34px',
+          flexGrow: 1,
+          height: '100%',
           [theme.breakpoints.down('md')]: {
             padding: '29px 24px',
           },
@@ -57,6 +61,6 @@ export const ContentCard = (props: ContentCardProps) => {
       >
         {children}
       </Box>
-    </Box>
+    </Stack>
   )
 }

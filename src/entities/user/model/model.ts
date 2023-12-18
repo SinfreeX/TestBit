@@ -1,4 +1,4 @@
-import {HeadCell} from "../../../shared/ui/SortableTable.tsx/SortableTable";
+import {HeadCell} from "../../../shared/ui";
 
 
 export type UserTableRowModel = {
@@ -7,6 +7,36 @@ export type UserTableRowModel = {
   role: string
   subscribe: string
   tokens: string
+}
+
+export type PlanModel = {
+  id: string
+  type: string
+  price: number
+  currency: string
+  tokens: number
+}
+
+export type SubscriptionModel = {
+  id: string
+  plan_id: string
+  user_id: string
+  tokens: number
+  additional_tokens: number
+  created_at: string
+  plan: PlanModel
+}
+
+export type UserModel = {
+  id: string
+  email: string
+  tg_id: string | null
+  name: string
+  password: string | null
+  avatar: string | null
+  created_at: string
+  role: string
+  subscription: SubscriptionModel
 }
 
 export const userTableHeadCells: HeadCell<keyof UserTableRowModel | 'actions'>[] = [

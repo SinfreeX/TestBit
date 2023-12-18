@@ -1,6 +1,5 @@
 import {TableCell, Typography} from "@mui/material";
 import {TransactionTableRowModel} from "../model/model";
-import {priceSlicer} from "../../../shared/utils/priceSlicer";
 
 export type RenderSumCellProps = {
   row: TransactionTableRowModel
@@ -8,9 +7,8 @@ export type RenderSumCellProps = {
 }
 
 export const RenderSumCell = ({cell, row}: RenderSumCellProps) => {
-  const [sum, token] = (cell as string).split(' ')
   return (
-    <TableCell align="center">
+    <TableCell align="center" key={(row as any)?.id || 'unic'}>
       <Typography
         fontWeight={500}
         fontSize={'0.875rem'}
@@ -18,7 +16,7 @@ export const RenderSumCell = ({cell, row}: RenderSumCellProps) => {
           color: (row.type === 'Пополнение' ? palette.success.main : palette.error.main) + '!important'
         })}
       >
-        {`${row.type === 'Пополнение' ? '+' : '-'}${priceSlicer(sum)} ${token}`}
+        {`${row.type === 'Пополнение' ? '+' : '-'}${cell as string || ''}`}
       </Typography>
     </TableCell>
   )

@@ -1,3 +1,5 @@
-export {UserTable} from './ui/userTable'
+export {type UserTableProps, UserTable} from './ui/userTable'
 export {userTableDataGenerator} from './api/dataGenerator'
+export {type getUserListRequestParams, type getUserListResponse, getUserList} from './api/getUserList/getUserList'
+export {userListMapper} from './api/getUserList/mapper'
 export {type UserTableRowModel, userTableHeadCells} from './model/model'

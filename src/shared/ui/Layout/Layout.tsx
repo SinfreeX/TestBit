@@ -4,10 +4,11 @@ import {Header} from "../Header/Header";
 
 
 export const Layout = () => (
-  <Box >
+  <Box maxHeight="100vh">
     <Stack
       sx={(theme) => ({
         gap: '34px',
+        maxHeight: '100%',
         [theme.breakpoints.down('md')]: {
           gap: '32px',
         },

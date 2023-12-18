@@ -1,28 +1,24 @@
-import React, {useMemo, useState} from "react";
+import React, {Dispatch, SetStateAction, useState} from "react";
 
-import {ContentCard} from "../../../shared/ui/ContentCard/ContentCard";
-import {SortableTable, SortableTableProps} from "../../../shared/ui/SortableTable.tsx/SortableTable";
+import {Stack, Theme, useMediaQuery} from "@mui/material";
+
 import {userTableHeadCells, UserTableRowModel} from "../model/model";
-import {TablePaginator} from "../../../shared/ui/SortableTable.tsx/TablePaginator";
-import {Stack} from "@mui/material";
-import {SearchFiled} from "../../../shared/ui/SearchField/SearchFiled";
+import {ContentCard} from "../../../shared/ui";
+import {SortableTable, SortableTableProps, TableData} from "../../../shared/ui";
+import {TablePaginator} from "../../../shared/ui";
+import {SearchFiled} from "../../../shared/ui";
 
 export type UserTableProps = {
-  tableData: Record<keyof UserTableRowModel | 'id', any>[]
+  tableData: TableData,
+  pageNumber: number,
+  setPageNumber: Dispatch<SetStateAction<number>>
 } & Partial<Pick<SortableTableProps<keyof UserTableRowModel>, 'onClickRow'>>
 
 export const UserTable = (props: UserTableProps) => {
-  const {onClickRow, tableData} = props
-
-  const [pageNumber, setPageNumber] = useState(1)
+  const {onClickRow, tableData, pageNumber, setPageNumber} = props
   const [searchValue, setSearchValue] = useState('')
 
-  const sortedData = useMemo(() => {
-    if (!searchValue) return tableData
-    return tableData.filter(row =>
-      !!Object.values(row).find(cell => cell.includes(searchValue))
-    )
-  }, [searchValue])
+  const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'))
 
 
   return (
@@ -33,15 +29,14 @@ export const UserTable = (props: UserTableProps) => {
           setValue={setSearchValue}
         />
         <SortableTable
-          tableData={sortedData}
+          tableData={(tableData.pagesData && tableData.pagesData[pageNumber]) ? tableData.pagesData[pageNumber] : []}
           headCells={userTableHeadCells}
-          pageNumber={pageNumber}
-          pageSize={10}
           onClickRow={onClickRow}
+          isLoading={tableData.isLoading}
+          maxHeight={`calc(100vh - ${isMobile ? '350px' : '450px'})`}
         />
         <TablePaginator
-          data={sortedData}
-          pageSize={10}
+          totalPages={tableData.totalPages}
           pageNumber={pageNumber}
           setPageNumber={setPageNumber}
         />
